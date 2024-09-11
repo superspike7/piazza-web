@@ -7,12 +7,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference ["User.count", "Organization.count"], 1 do
       post sign_up_path, params: {
-                      user: {
-                        name: "Dryxcy",
-                        email: "mamabing@gmail.com",
-                        password: "password",
-                      },
-                    }
+                           user: {
+                             name: "Dryxcy",
+                             email: "mamabing@gmail.com",
+                             password: "password",
+                             password_confirmation: "password",
+                           },
+                         }
     end
 
     assert_redirected_to root_path
@@ -20,7 +21,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select ".notification.is-success",
                   text: I18n.t(
                     "users.create.welcome",
-                    name: "Dryxcy"
+                    name: "Dryxcy",
                   )
   end
 
@@ -30,17 +31,21 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference ["User.count", "Organization.count"] do
       post sign_up_path, params: {
-                      user: {
-                        name: "",
-                        email: "mamabing",
-                        password: "small",
-                      },
-                    }
+                           user: {
+                             name: "",
+                             email: "mamabing",
+                             password: "small",
+                             password_confirmation: "big",
+                           },
+                         }
     end
 
     assert_response :unprocessable_entity
     assert_select "p.is-danger",
                   text: I18n.t
     ("activerecord.errors.models.user.attributes.password.too_short")
+    assert_select "p.is-danger",
+                  text: I18n.t
+    ("activerecord.errors.models.user.attributes.password_confirmation.confirmation")
   end
 end
