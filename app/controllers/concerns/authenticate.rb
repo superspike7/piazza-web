@@ -19,7 +19,6 @@ module Authenticate
     end
   end
 
-
   protected
 
   def logged_in?
@@ -30,6 +29,10 @@ module Authenticate
     cookies.encrypted.permanent[:app_session] = {
       value: app_session.to_h,
     }
+  end
+
+  def log_out
+    Current.app_session&.destroy
   end
 
   def authenticate
